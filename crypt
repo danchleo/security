@@ -1,0 +1,40 @@
+
+def encrypt(key, words):
+    byte_keys = bytearray(str(key))
+    byte_keys_len = len(byte_keys)
+
+    byte_words = bytearray(str(words))
+    byte_words_len = len(byte_words)
+    byte_encrypted_words = bytearray(byte_words_len*2)
+
+    for i in range(0, byte_words_len):
+        using_key_index = i % byte_keys_len
+        tmp = byte_words[i] ^ byte_keys[using_key_index]
+        byte_encrypted_words[i*2] = tmp%16 + 65
+        byte_encrypted_words[i*2+1] = tmp//16 + 65
+
+    return str(byte_encrypted_words)
+
+
+def decrypt(key, words):
+    byte_keys = bytearray(str(key))
+    byte_keys_len = len(byte_keys)
+
+    byte_encrypted_words = bytearray(str(words))
+    byte_encrypted_words_len = len(byte_encrypted_words)
+
+    if byte_encrypted_words_len % 2 != 0:
+        raise Exception('Failed to decrypting')
+
+    byte_words_len = byte_encrypted_words_len // 2
+    byte_words = bytearray(byte_words_len)
+
+    for i in range(0, byte_words_len):
+        using_key_index = i % byte_keys_len
+        tmp = (byte_encrypted_words[i*2+1] - 65)*16 + (byte_encrypted_words[i*2] - 65)
+        byte_words[i] = tmp ^ byte_keys[using_key_index]
+
+    try:
+        return str(byte_words)
+    except:
+        raise Exception('Failed to decrypting')
